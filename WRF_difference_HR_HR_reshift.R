@@ -7,7 +7,7 @@
 #
 # File: WRF_functions.R
 #
-#Author: Guido Cervone (cervone@polygonsu.edu) and Yanni Cao (yvc5268@polygonsu.edu)
+#Author: Guido Cervone (cervone@psu.edu) and Yanni Cao (yvc5268@psu.edu)
 #        Geoinformatics and Earth Observation Laboratory (http://geolab.polygonsu.edu)
 #        Department of Geography and Institute for CyberScience
 #        The Pennsylvania State University
@@ -144,7 +144,7 @@ outdir = "~/geolab_storage/data/Marcellus/Reprojection/WRF-Output-Comparisons-Ma
 
 #layers    = c(1,7,13,19,25)    # vertical layer for the parameter (2 = second layer from surface)
 layers      = c(1)
-WRF.layers = c("tracer_1","tracer_5")
+WRF.layers = c("tracer_1","tracer_5") #The input can be Temp, WindSpeed and WindDir. Tracer 1 and Tracer 5 represent methane emissions.
 ids        = seq(1,25)          # The hour for the result (e.g. 30 = 30th hour from beginning of simulation)
 
 
