@@ -77,7 +77,7 @@ for ( ncfile in ncfiles ) {
     # WRF.new is an object of class ncdf
     # WRF.layer is what variable to write the data to
     # WRF.data.HR is the values to be written
-    put.var.ncdf(WRF.new, WRF.layer, WRF.data.HR)
+    ncvar_put(WRF.new, WRF.layer, WRF.data.HR)
     
     
     # Now take care of the landmask
@@ -85,10 +85,10 @@ for ( ncfile in ncfiles ) {
     if ( WRF.layer == "LU_INDEX") {
       WRF.data.HR[WRF.data.HR<=17] = 0
       WRF.data.HR[WRF.data.HR>17]  = 1
-      put.var.ncdf(WRF.new, "LANDMASK", WRF.data.HR)
+      ncvar_put(WRF.new, "LANDMASK", WRF.data.HR)
     }
 
   } 
-  close.ncdf(WRF)
-  close.ncdf(WRF.new)
+  nc_close(WRF)
+  nc_close(WRF.new)
 }

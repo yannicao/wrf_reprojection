@@ -349,7 +349,7 @@ WRF.preprocess = function(  filename.wrf, filename.raster, filename.raster2="", 
   filename.Rdata         = paste(dirname(filename.wrf),"/",filename.raster.esri,".Rdata",sep="")
   save(WRF.data.HR, file = filename.Rdata)
   
-  close.ncdf(WRF)
+  nc_close(WRF)
 }
 
 
