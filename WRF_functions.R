@@ -15,7 +15,7 @@
 #
 
 library(tools)
-library(ncdf)
+library(ncdf4)
 library(raster)
 library(rgdal)
 
@@ -153,18 +153,18 @@ WRF.grid2polygons = function(WRF, type="input") {
   # Read the WRF domain definition
   #
   if ( type == "input") {
-    lats.c   = get.var.ncdf(WRF,"CLAT")
-    longs.c  = get.var.ncdf(WRF,"CLONG")
+    lats.c   = ncvar_get(WRF,"CLAT")
+    longs.c  = ncvar_get(WRF,"CLONG")
   } else {
-    lats.c   = get.var.ncdf(WRF,"XLAT")
-    longs.c  = get.var.ncdf(WRF,"XLONG")
+    lats.c   = ncvar_get(WRF,"XLAT")
+    longs.c  = ncvar_get(WRF,"XLONG")
   }
   
-  lats.u   = get.var.ncdf(WRF,"XLAT_U")
-  longs.u  = get.var.ncdf(WRF,"XLONG_U")
+  lats.u   = ncvar_get(WRF,"XLAT_U")
+  longs.u  = ncvar_get(WRF,"XLONG_U")
   
-  lats.v   = get.var.ncdf(WRF,"XLAT_V")
-  longs.v  = get.var.ncdf(WRF,"XLONG_V")
+  lats.v   = ncvar_get(WRF,"XLAT_V")
+  longs.v  = ncvar_get(WRF,"XLONG_V")
  
   #Convert the grid to shapefiles
   #
@@ -227,11 +227,11 @@ WRF.preprocess = function(  filename.wrf, filename.raster, filename.raster2="", 
   
   # Read the ncdf data
   #
-  WRF                = open.ncdf(filename.wrf,write=F)
+  WRF                = nc_open(filename.wrf,write=F)
   
   # Get the elevation and the grid
   #
-  WRF.data           = get.var.ncdf(WRF,WRF.layer)
+  WRF.data           = ncvar_get(WRF,WRF.layer)
   
   # This is in case the WRF.data has more than 2 dimensions
   #
@@ -252,7 +252,7 @@ WRF.preprocess = function(  filename.wrf, filename.raster, filename.raster2="", 
   }
   
   if ( WRF.layer == "F" || WRF.layer =="E") {
-    data.raster   = get.var.ncdf(WRF,"CLAT")
+    data.raster   = ncvar_get(WRF,"CLAT")
   } else {
     # Read the raster data and make sure it is in WGS84
     #
@@ -390,9 +390,9 @@ getDataWRF = function( filename.wrf, WRF.layer="Temp", layer=2, type="input" ) {
 
   print(paste("Processing:",filename.wrf,WRF.layer,layer))
   
-  WRF                = open.ncdf(filename.wrf,write=F)
+  WRF                = nc_open(filename.wrf,write=F)
   
-  temp               = get.var.ncdf(WRF,"CLAT")
+  temp               = ncvar_get(WRF,"CLAT")
   
   if ( WRF.layer == "Temp") {
     #Calculate temprature, combing:
@@ -400,26 +400,26 @@ getDataWRF = function( filename.wrf, WRF.layer="Temp", layer=2, type="input" ) {
     ###this one is wrong since WRF Pressure is in pa
     ###it should be converted to mbar. so I used (PB+B)/100
     #http://mailman.ucar.edu/pipermail/wrf-users/2010/001896.html
-    P               = get.var.ncdf(WRF,"P")[,,layer]
-    PB              = get.var.ncdf(WRF,"PB")[,,layer]
+    P               = ncvar_get(WRF,"P")[,,layer]
+    PB              = ncvar_get(WRF,"PB")[,,layer]
     TotalPotentialTemperature = T+300
     WRF.data     = TotalPotentialTemperature*((((PB+P)/100)/1000)^(2/7))-273.15
   } else if ( WRF.layer == "WindSpeed"){
-    U               = get.var.ncdf(WRF,"U")[,,layer]
+    U               = ncvar_get(WRF,"U")[,,layer]
     U               = U[1:nrow(temp),1:ncol(temp)]
-    V               = get.var.ncdf(WRF,"V")[,,layer]
+    V               = ncvar_get(WRF,"V")[,,layer]
     V               = V[1:nrow(temp),1:ncol(temp)]
     spd             = UVtoSpd(as.vector(U),as.vector(V))
     WRF.data        = matrix(spd,nrow = nrow(temp),ncol =ncol(temp))
   } else if ( WRF.layer == "WindDir"){
-    U               = get.var.ncdf(WRF,"U")[,,layer]
+    U               = ncvar_get(WRF,"U")[,,layer]
     U               = U[1:nrow(temp),1:ncol(temp)]
-    V               = get.var.ncdf(WRF,"V")[,,layer]
+    V               = ncvar_get(WRF,"V")[,,layer]
     V               = V[1:nrow(temp),1:ncol(temp)]
     dir             = UVtoDir(as.vector(U),as.vector(V))
     WRF.data        = matrix(dir,nrow = nrow(temp),ncol =ncol(temp))
   } else {
-    WRF.data     = get.var.ncdf(WRF,WRF.layer)
+    WRF.data     = ncvar_get(WRF,WRF.layer)
     if ( length(dim(WRF.data)) > 2) { WRF.data = WRF.data[,,layer]}
     
     WRF.data     = WRF.data[1:nrow(temp),1:ncol(temp)]

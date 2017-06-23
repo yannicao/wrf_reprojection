@@ -1,4 +1,4 @@
-library(ncdf)
+library(ncdf4)
 library(tools)
 library(raster)
 
@@ -32,15 +32,15 @@ for ( ncfile in ncfiles ) {
   #
   file.copy( filename.wrf, filename.wrf.new,overwrite = TRUE )
   
-  WRF.new            = open.ncdf(filename.wrf.new,write=T)
-  WRF                  = open.ncdf(filename.wrf,    write=F)
+  WRF.new            = nc_open(filename.wrf.new,write=T)
+  WRF                  = nc_open(filename.wrf,    write=F)
   
   for ( WRF.layer in parameters ) {
     print(paste("Working on:", filename.wrf.new, WRF.layer))
     
     # Get the original WRF data layer
     #
-    original = get.var.ncdf(WRF, WRF.layer)
+    original = ncvar_get(WRF, WRF.layer)
     
     
     if ( WRF.layer == "LAI12M" || WRF.layer == "ALBEDO12M") {

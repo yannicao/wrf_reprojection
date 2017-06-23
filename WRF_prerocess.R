@@ -16,7 +16,7 @@
 
 require(rgdal)
 require(raster)
-library(ncdf)
+library(ncdf4)
 library(parallel)        # to make things in parallel (multicore)
 library(tools)           # for filename operations
 
@@ -355,9 +355,8 @@ if ( FALSE ) {
   CA   = raster(filename.CA)
   NLCD = raster(filename.NLCD)
   
-  WRF                = open.ncdf("../../../../data/Marcellus/Reprojection/geo_em.d01.nc",write=T)
-  lats   = range(get.var.ncdf(WRF,"CLAT"))
-  longs  = range(get.var.ncdf(WRF,"CLONG"))
+  lats   = range(ncvar_get(WRF,"CLAT"))
+  longs  = range(ncvar_get(WRF,"CLONG"))
   
   
   lats[1] = lats[1] -.05
